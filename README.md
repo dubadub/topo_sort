@@ -1,6 +1,10 @@
 # TopoSort
 
-TODO: Write a gem description
+Take a hash of elements and their dependencies and sort
+them in an order where each element required is before
+the elements that require it.
+
+Note. Each element can have only one dependency.
 
 ## Installation
 
@@ -16,14 +20,15 @@ Or install it yourself as:
 
     $ gem install topo_sort
 
-## Usage
+## Example usage
 
-TODO: Write usage instructions here
+    nodes  = { 'a' => nil, 'b' => 'c', 'c' => 'f', 'd' => 'a', 'e' => 'b', 'f' => nil }
 
-## Contributing
+    TopoSort.sort(nodes)
+    #=> ["a", "f", "c", "b", "d", "e"]
 
-1. Fork it ( http://github.com/<my-github-username>/topo_sort/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+## Run tests
+
+Run tests with:
+
+    rake
