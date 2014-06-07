@@ -20,15 +20,7 @@ module TopoSort
   def sort(nodes)
     @sorted   = []
 
-    @vertices = nodes.inject({}) do |memo, (node, dependency)|
-      memo[node] = OpenStruct.new(
-        name:       node,
-        dependency: dependency,
-        marked:     false,       #store the vertex has been visited by dfs
-        on_stack:   false        #to detect cycle
-      )
-      memo
-    end
+    @vertices = populate_vertices(nodes)
 
     nodes.each{ |(node, dep)| visit(@vertices[node]) unless @vertices[node].marked }
 
@@ -40,14 +32,28 @@ module TopoSort
   def visit(vertice)
     vertice.marked  = true
     vertice.on_stack = true
+
     if vertice.dependency && dependency = @vertices[vertice.dependency]
       raise SelfDependency.new("sort failed: detected self-dependency for '#{vertice.name}'")             if dependency == vertice
       raise Cyclic.new("sort failed: detected cyclic dependency '#{vertice.name} => #{dependency.name}'") if dependency.on_stack
       visit(dependency) unless dependency.marked
     end
+
     vertice.on_stack = false
 
     @sorted.push vertice.name
+  end
+
+  def populate_vertices(nodes)
+    nodes.inject({}) do |memo, (node, dependency)|
+      memo[node] = OpenStruct.new(
+        name:       node,
+        dependency: dependency,
+        marked:     false,       #store the vertex has been visited by dfs
+        on_stack:   false        #to detect cycle
+      )
+      memo
+    end
   end
 
 end
