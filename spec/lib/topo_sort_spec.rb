@@ -24,7 +24,7 @@ describe TopoSort do
     }
 
     sorted = TopoSort.sort(nodes)
-    sorted.should == nodes
+    sorted.should == [:a, :b, :c]
   end
 
   it "should sort several nodes with one that has dependency" do
@@ -49,7 +49,7 @@ describe TopoSort do
     }
 
     sorted = TopoSort.sort(nodes)
-    sorted.should == [:f, :c, :b, :e, :a, :d]
+    sorted.should == [:a, :f, :c, :b, :d, :e]
   end
 
   it "should raise error when node depends on themselve" do
@@ -58,7 +58,7 @@ describe TopoSort do
       b: nil,
       c: :c
     }
-    expect { TopoSort.sort(nodes) }.to raise_error(TopoSort::SelfDependency, /sort failed: detected self dependency/)
+    expect { TopoSort.sort(nodes) }.to raise_error(TopoSort::SelfDependency, /sort failed: detected self-dependency/)
   end
 
   it "should raise error when circular dependency is presented" do
@@ -70,6 +70,6 @@ describe TopoSort do
       e: nil,
       f: :b
     }
-    expect { TopoSort.sort(nodes) }.to raise_error(TopoSort::Cyclic, /sort failed: detcted cyclic dependency/)
+    expect { TopoSort.sort(nodes) }.to raise_error(TopoSort::Cyclic, /sort failed: detected cyclic dependency/)
   end
 end
